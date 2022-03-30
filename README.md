@@ -7,6 +7,7 @@ How to map large geojson data sources on the web using vector tiles and MapLibre
 - [Download the California Wildfires Data](#download-the-california-wildfires-data)
 - [Prepare the HTML Boilerplate](#prepare-the-html-boilerplate)
 - [Add a Title Bar and Time Slider](#add-a-title-bar-and-time-slider)
+- [Add Vector Base Tiles](#add-vector-base-tiles)
 
 ## Introduction
 Occasionally you have a large geojson file you want to include in a web map application, but it slows down your map even after implementing various file simplification techniques. Instead of trying all forms of file resizing to fit your data in a Leaflet map, you can convert your geojson file into vector tiles and build an interactive map using the MapLibre GL JS library with all the same functionality. The following is a step-by-step walkthrough of two methods for incorporating large geojson files as vector tiles in MapLibre GL JS using [more than a century of California wildfire data](https://services.gis.ca.gov/arcgis/rest/services/Environment/Wildfires/MapServer). You will see how to process these data as vector tiles and then filter them by year using a time slider. You will also learn how to add popup content to allow users to query the wildfire polygons.
@@ -166,3 +167,34 @@ Upon refresh, the result should look like this:
 
 ![The Title and Time Slider](images/title.PNG)  
 **Figure 02**. Title and Time Slider.
+
+## Add Vector Base Tiles
+
+Now that we have a title, we should add a base map to our blank map screen for some spatial context. Within the script tags, insert the following javascript.
+
+```html
+  <script>
+    // javascript goes here
+
+    // your maptiler key
+    const key = 'X79IRuovndFj8moKWjAt'
+
+    // define the style.json for the vector tiles here
+    const style = 'https://api.maptiler.com/maps/darkmatter/style.json?key=' + key
+
+    // define the map
+    const map = new maplibregl.Map({
+      container: 'map',
+      bounds: [[-124.48,32.53],[-114.13,42.01]], // the coordinate boundaries of California
+      maxZoom: 16,
+      style: style
+    });
+  </script>
+```
+
+Unlike raster tile providers, most vector tiles currently sit behind a paywall or require a personal api key to use. Fortunately, Maptiler offers open-source vector base tiles, but you will need to [sign up for a free account](https://cloud.maptiler.com/maps/). Once you do, you can find your api key by clicking your "Account" tab. The nice thing about this service is that you can add new keys that only work for certain domains. This way, no one else can steal your key from GitHub to use for a map hosted elsewhere.
+
+In the code above, we have added maptiler's darkmatter style. If you are successful, the map should now look like this:
+
+![Dark Matter Vector Tiles](images/cal-dm.PNG)  
+**Figure 03**. Dark Matter Vector Tiles.

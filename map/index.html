@@ -98,6 +98,20 @@
 
   <script>
     // javascript goes here
+
+    // your maptiler key
+    const key = 'X79IRuovndFj8moKWjAt'
+
+    // define the style.json for the vector tiles here
+    const style = 'https://api.maptiler.com/maps/darkmatter/style.json?key=' + key
+
+    // define the map
+    const map = new maplibregl.Map({
+      container: 'map',
+      bounds: [[-124.48,32.53],[-114.13,42.01]], // the coordinate boundaries of California
+      maxZoom: 16,
+      style: style
+    });
   </script>
 
 </body>
