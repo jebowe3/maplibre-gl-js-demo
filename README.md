@@ -4,6 +4,8 @@ How to map large geojson data sources on the web using vector tiles and MapLibre
 ## Contents
 
 - [Introduction](#introduction)
+- [Download the California Wildfires Data](#download-the-california-wildfires-data)
+- [Prepare the HTML Boilerplate](#prepare-the-html-boilerplate)
 
 ## Introduction
 Occasionally you have a large geojson file you want to include in a web map application, but it slows down your map even after implementing various file simplification techniques. Instead of trying all forms of file resizing to fit your data in a Leaflet map, you can convert your geojson file into vector tiles and build an interactive map using the MapLibre GL JS library with all the same functionality. The following is a step-by-step walkthrough of two methods for incorporating large geojson files as vector tiles in MapLibre GL JS using [more than a century of California wildfire data](https://services.gis.ca.gov/arcgis/rest/services/Environment/Wildfires/MapServer). You will see how to process these data as vector tiles and then filter them by year using a time slider. You will also learn how to add popup content to allow users to query the wildfire polygons.
@@ -17,5 +19,7 @@ Create a folder structure as follows for your project, creating an index.html fi
 **Figure 01**. How to Organize Your Project.
 
 Inside the data folder within the map folder, grab the calWildfires.json file and add this to your own project folder in your "data" subdirectory. You will notice that this file is a little more than 50 MB and quite a bit larger than the maximum file size recommended for Leaflet maps.
+
+## Prepare the HTML Boilerplate
 
 Now, open your blank index.html file and set it up to handle vector tiles with MapLibre.
