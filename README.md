@@ -6,6 +6,7 @@ How to map large geojson data sources on the web using vector tiles and MapLibre
 - [Introduction](#introduction)
 - [Download the California Wildfires Data](#download-the-california-wildfires-data)
 - [Prepare the HTML Boilerplate](#prepare-the-html-boilerplate)
+- [Add a Title Bar and Time Slider](#add-a-title-bar-and-time-slider)
 
 ## Introduction
 Occasionally you have a large geojson file you want to include in a web map application, but it slows down your map even after implementing various file simplification techniques. Instead of trying all forms of file resizing to fit your data in a Leaflet map, you can convert your geojson file into vector tiles and build an interactive map using the MapLibre GL JS library with all the same functionality. The following is a step-by-step walkthrough of two methods for incorporating large geojson files as vector tiles in MapLibre GL JS using [more than a century of California wildfire data](https://services.gis.ca.gov/arcgis/rest/services/Environment/Wildfires/MapServer). You will see how to process these data as vector tiles and then filter them by year using a time slider. You will also learn how to add popup content to allow users to query the wildfire polygons.
@@ -23,3 +24,145 @@ Inside the data folder within the map folder, grab the calWildfires.json file an
 ## Prepare the HTML Boilerplate
 
 Now, open your blank index.html file and set it up to handle vector tiles with MapLibre.
+
+```HTML
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>California Wildfires</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <!-- maplibre-gl.css here -->
+  <link href='https://unpkg.com/maplibre-gl@2.1.7/dist/maplibre-gl.css' rel='stylesheet' />
+  <!-- Rubik font -->
+  <link href="https://fonts.googleapis.com/css?family=Rubik&display=swap" rel="stylesheet">
+
+  <style>
+    /* basic css to style the viewer goes here */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- id the map div -->
+  <div id='map'></div>
+
+  <!-- maplibre-gl.js library -->
+  <script src='https://unpkg.com/maplibre-gl@2.1.7/dist/maplibre-gl.js'></script>
+
+  <script>
+    // javascript goes here
+  </script>
+
+</body>  
+```
+
+The code above references our necessary MapLibre css and javascript libraries, adds Rubik font from Google, defines the map div, and styles the map and body with some basic css.
+
+## Add a Title Bar and Time Slider
+
+Before going too much further, we should add a title and time slider element so that our map is prepared to handle this filtration later. Within the body tags, and just beneath the code identifying the map div, add and id another div for the title and time slider.
+
+```html
+  <!-- id the map div -->
+  <div id='map'></div>
+
+  <!-- title and time slider -->
+  <div class='session' id='sliderbar'>
+    <!-- the shown title of the map -->
+    <h1>California Wildfires, 1878 - 2010</h1>
+    <div class='container'>
+      <!-- the selected year -->
+      <h2>Year: <label id='active-year'>2010</label></h2>
+    </div>
+    <!-- the slider has a range from 1878 to 2010, intervals of 1 year, and an initial value of 2010 -->
+    <input id='slider' class='row' type='range' min='1878' max='2010' step='1' value='2010' />
+  </div>
+```
+
+Now we need to style this content with some css within the style tags.
+
+```HTML
+  <style>
+    /* basic css to style the viewer goes here */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* set styles for the container holding the title and slider */
+    .session {
+      position: absolute;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.3);
+      top: 10px;
+      left: 10px;
+      padding: 5px;
+    }
+
+    /* set styles for the container holding the year legend */
+    .container {
+      display: table;
+      width: 100%;
+      margin: 0;
+    }
+
+    /* set font styles for the title */
+    h1 {
+      font-size: 20px;
+      font-family: 'Rubik', sans-serif;
+      padding-bottom: 0px;
+      padding-top: 0px;
+      font-weight: normal;
+    }
+
+    /* set font styles for the identified year */
+    h2 {
+      cursor: pointer;
+      font-size: 14px;
+      font-family: 'Rubik', sans-serif;
+      padding-bottom: 0px;
+      padding-top: 0px;
+      font-weight: normal;
+      width: 50%;
+      text-align: left;
+      display: table-cell;
+    }
+
+    /* define the slider width and change the cursor to a pointer on hover */
+    #slider {
+      cursor: pointer;
+      width: 275px;
+    }
+
+  </style>
+```
+
+Upon refresh, the result should look like this:
+
+![The Title and Time Slider](images/title.PNG)  
+**Figure 02**. Title and Time Slider.
