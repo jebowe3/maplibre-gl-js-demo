@@ -96,8 +96,17 @@
   <!-- maplibre-gl.js library -->
   <script src='https://unpkg.com/maplibre-gl@2.1.7/dist/maplibre-gl.js'></script>
 
+  <!-- d3 js -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
   <script>
     // javascript goes here
+
+    // define the initial slider-selected year
+    const initYear = document.getElementById('slider').value;
+
+    // update text in the UI
+    document.getElementById('active-year').innerText = initYear;
 
     // your maptiler key
     const key = 'X79IRuovndFj8moKWjAt'
@@ -112,6 +121,131 @@
       maxZoom: 16,
       style: style
     });
+
+    // add zoom and rotation controls to the map.
+    map.addControl(new maplibregl.NavigationControl());
+
+    // add a scale bar
+    map.addControl(new maplibregl.ScaleControl({
+      position: 'bottom-left',
+      unit: 'imperial' // you can change from imperial to metric, if desired
+    }));
+
+    // create a popup without adding to map
+    let popup = new maplibregl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+
+    // define initial hover state
+    let hoveredStateId = null;
+
+    // when the map loads, call a function
+    map.on('load', () => {
+
+      // define incoming geojson data
+      const calwf = d3.json('./data/calWildfires.geojson');
+
+      // promise to wait until geojson files are loaded
+      Promise.all([calwf]).then((data) => {
+
+        // define the data according to its order in object array
+        const wildfires = data[0];
+
+        // add the source to the map
+        map.addSource('wildfires', {
+          type: 'geojson',
+          data: wildfires // use our data as the data source
+        });
+        // add the GeoJSON data as a mapbox gl layer
+        map.addLayer({
+          'id': 'wildfires',
+          'type': 'fill',
+          'source': 'wildfires', // refers to source above
+          'layout': {},
+          "paint": {
+            "fill-color":"orange",
+            "fill-opacity": [
+              'case',
+              ['boolean', ['feature-state', 'hover'], false],
+              1.0,
+              0.5
+            ]
+          },
+          "filter": ['==', ['string', ['get', 'YEAR_']], initYear]
+        });
+
+      });
+
+    });
+
+    // fire a function on a mousemove and feed it the geojson we gave an id of 'wildfires'
+    map.on('mousemove','wildfires', (e) => {
+
+      // change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = 'pointer';
+
+      // reset the hover state id on mousemove so the layer knows when to change opacity
+      if (e.features.length > 0) {
+        if (hoveredStateId !== null) {
+          map.setFeatureState(
+            { source: 'wildfires', id: hoveredStateId },
+            { hover: false }
+          );
+        }
+        hoveredStateId = e.features[0].id;
+        map.setFeatureState(
+          { source: 'wildfires', id: hoveredStateId },
+          { hover: true }
+        );
+      }
+
+      // define the layer properties
+      // with "e.features[0].properties," you have access to all of the properties from the initial geojson layer
+      let props = e.features[0].properties;
+
+      // get the popup defined above
+      popup
+        .setLngLat(e.lngLat) // the location of the cursor
+        .setHTML('<b>' + props.FIRE_NAME + '</b><br>Year: ' + props.YEAR_ + '<br>Acres burned: ' + props.GIS_ACRES.toFixed(2)) // feed the popup the prop info
+        .addTo(map) // add the popup to the map
+
+    });
+
+    // when you mouse off the layer...
+    map.on('mouseleave', 'wildfires', () => {
+
+      // change the cursor style back to initial setting
+      map.getCanvas().style.cursor = '';
+
+      // reset the hover state id
+      if (hoveredStateId !== null) {
+        map.setFeatureState(
+          { source: 'wildfires', id: hoveredStateId },
+          { hover: false }
+        );
+      }
+      hoveredStateId = null;
+
+      // and remove the popup
+      popup.remove();
+
+    });
+
+
+    // listen for a slider input
+    document.getElementById('slider').addEventListener('input', (event) => {
+
+      // define the newly-selected year
+      const year = event.target.value;
+
+      // update text in the UI
+      document.getElementById('active-year').innerText = year;
+
+      map.setFilter('wildfires', ['==', ['string', ['get', 'YEAR_']], year]);
+
+    });
+
   </script>
 
 </body>
