@@ -415,7 +415,7 @@ There is one caveat to all of this; it only works if your geojson has a unique f
 
 The result should look like the image below.
 
-![Popup and Shading on Hover](images/popup.PNG)  
+![Popup and Shading on Hover](images/popup.png)
 **Figure 05**. Popup and Shading on Hover.
 
 ## Filter Geojson Data with the Time Slider
@@ -442,7 +442,7 @@ First, at the very bottom of the script after the function fired by the mouselea
 
 With this block of code, the slider interacts with the year legend and the geojson data. Now you should see both the year change in the legend above the slider as well as the wildfire polygons filtering as you drag the slider. The image below shows all fires filtered to show only those that occurred in 1924.
 
-![Temporal Filtration](images/slider-filter.PNG)  
+![Temporal Filtration](images/slider-filter.png)  
 **Figure 06**. Temporal Filtration.
 
 This works, but all of the wildfire polygons still display when the map loads, so we need to go back and add the filter to the layer when it is first added to the map. At the very top of your script, just above ```const key```, add the following code to identify the initial year selected with the time slider and to change the year legend to reflect this year.
