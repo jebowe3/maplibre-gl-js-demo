@@ -480,7 +480,7 @@ Next, filter your data on initial loading by adding the following filter option 
         });
 ```  
 
-You should now have a web map application that generates vector tiles from heavy geojson data on the fly using MapLibre GL JS. In case you mixed up anything, the following consists of the entire code used to generate this map. If you would like to see another, slightly more complicated, technique that speeds up your map by converting your geojson data to vector tiles before loading, skip the following code and follow the instructions in the next section.
+You should now have [a web map application that generates vector tiles from heavy geojson data on the fly using MapLibre GL JS](https://jebowe3.github.io/maplibre-gl-js-demo/map/index.html). In case you mixed up anything, the following consists of the entire code used to generate this map. If you would like to see another, slightly more complicated, technique that speeds up your map by converting your geojson data to vector tiles before loading, skip the following code and follow the instructions in the next section.
 
 ```html
 <!DOCTYPE html>
