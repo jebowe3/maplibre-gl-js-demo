@@ -818,7 +818,7 @@ Now, find the three instances of the ```map.setFeatureState()``` method. Within 
      { source: 'wildfires', sourceLayer: 'calWildfires', id: hoveredStateId }
 ```
 
-You should now have [a web map application that uses pregenerated and self-styled vector tiles from heavy geojson data using MapLibre GL JS](https://jebowe3.github.io/maplibre-gl-js-demo/map/tiles.html). The entirety of the resulting code should look like this:
+You should now have [a web map application that uses pregenerated and self-styled vector tiles from heavy geojson data using MapLibre GL JS](https://jebowe3.github.io/maplibre-gl-js-demo/map). The entirety of the resulting code should look like this:
 
 ```HTML
 <!DOCTYPE html>
