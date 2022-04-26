@@ -5,15 +5,17 @@ How to map large geojson data sources on the web using vector tiles and MapLibre
 
 - [Introduction](#introduction)
 - [Download the California Wildfires Data](#download-the-california-wildfires-data)
-- [Prepare the HTML Boilerplate](#prepare-the-html-boilerplate)
-- [Add a Title Bar and Time Slider](#add-a-title-bar-and-time-slider)
-- [Add Vector Base Tiles](#add-vector-base-tiles)
-- [Adding GeoJSON Files as Vector Tiles On the Fly](#adding-geojson-files-as-vector-tiles-on-the-fly)
-- [Display Popup on Mouse Hover](#display-popup-on-mouse-hover)
-- [Filter Geojson Data with the Time Slider](#filter-geojson-data-with-the-time-slider)
-- [Generate Vector Tiles from GeoJSON Files](#generate-vector-tiles-from-geojson-files)
-- [Create a Style for the Vector Tiles](#create-a-style-for-the-vector-tiles)
-- [Edit MapLibre GL JavaScript](#edit-maplibre-gl-javascript)
+- [Method 1: Vector Tiles from GeoJSON On the Fly](#method-1:-vector-tiles-from-geojson-on-the-fly)
+  - [Prepare the HTML Boilerplate](#prepare-the-html-boilerplate)
+  - [Add a Title Bar and Time Slider](#add-a-title-bar-and-time-slider)
+  - [Add Vector Base Tiles](#add-vector-base-tiles)
+  - [Adding GeoJSON Files as Vector Tiles On the Fly](#adding-geojson-files-as-vector-tiles-on-the-fly)
+  - [Display Popup on Mouse Hover](#display-popup-on-mouse-hover)
+  - [Filter Geojson Data with the Time Slider](#filter-geojson-data-with-the-time-slider)
+- [Method 2: Pre-Generated and Styled Vector Tiles](#method-2:-pre-generated-and-styled-vector-tiles)
+  - [Generate Vector Tiles from GeoJSON Files](#generate-vector-tiles-from-geojson-files)
+  - [Create a Style for the Vector Tiles](#create-a-style-for-the-vector-tiles)
+  - [Edit MapLibre GL JavaScript](#edit-maplibre-gl-javascript)
 
 ## Introduction
 Occasionally you have a large geojson file you want to include in a web map application, but it slows down your map even after implementing various file simplification techniques. Instead of trying all forms of file resizing to fit your data in a Leaflet map, you can convert your geojson file into vector tiles and build an interactive map using the MapLibre GL JS library with all the same functionality. The following is a step-by-step walkthrough of two methods for incorporating large geojson files as vector tiles in MapLibre GL JS using [more than a century of California wildfire data](https://services.gis.ca.gov/arcgis/rest/services/Environment/Wildfires/MapServer). You will see how to process these data as vector tiles and then filter them by year using a time slider. You will also learn how to add popup content to allow users to query the wildfire polygons.
@@ -28,7 +30,8 @@ Create a folder structure as follows for your project, creating an index.html fi
 
 Inside the data folder within the map folder, grab the calWildfires.geojson file and add this to your own project folder in your "data" subdirectory. You will notice that this file is a little more than 40 MB and quite a bit larger than the maximum file size recommended for Leaflet maps.
 
-## Prepare the HTML Boilerplate
+## Method 1: Vector Tiles from GeoJSON On the Fly
+### Prepare the HTML Boilerplate
 
 Now, open your blank index.html file and set it up to handle vector tiles with MapLibre.
 
@@ -81,7 +84,7 @@ Now, open your blank index.html file and set it up to handle vector tiles with M
 
 The code above references our necessary MapLibre css and javascript libraries, adds Rubik font from Google, defines the map div, and styles the map and body with some basic css.
 
-## Add a Title Bar and Time Slider
+### Add a Title Bar and Time Slider
 
 Before going too much further, we should add a title and time slider element so that our map is prepared to handle this filtration later. Within the body tags, and just beneath the code identifying the map div, add and id another div for the title and time slider.
 
@@ -174,7 +177,7 @@ Upon refresh, the result should look like this:
 ![The Title and Time Slider](images/title.PNG)  
 **Figure 02**. Title and Time Slider.
 
-## Add Vector Base Tiles
+### Add Vector Base Tiles
 
 Now that we have a title, we should add a base map to our blank map screen for some spatial context. Within the script tags, insert the following javascript.
 
@@ -239,7 +242,7 @@ We can build on this a little and add a few preliminary interactive controls.
 
 After saving and refreshing the map, you should now notice a scale bar in the bottom left corner and a zoom and rotation control in the upper right corner.
 
-## Adding GeoJSON Files as Vector Tiles On the Fly
+### Adding GeoJSON Files as Vector Tiles On the Fly
 
 The first method to add geojson as vector tiles uses MapLibre GL JS to handle the processing on the fly. This is the easiest method, but is slower and less responsive in the browser than the second method I will demonstrate. Still, it is pretty good at handling large files.
 
@@ -301,7 +304,7 @@ Upon saving and refreshing, your map should now have all the wildfire polygons i
 ![Wildfires over Dark Matter](images/wildfires-all.PNG)  
 **Figure 04**. Wildfires over Dark Matter.
 
-## Display Popup on Mouse Hover
+### Display Popup on Mouse Hover
 
 Before tackling the more complicated time slider filtration interactivity, let's add and display popup content when the user hovers over each polygon. For this, we will need to write a function that parses the geojson attribute data and returns the information we want to the popup. First, we need to write some code to display an empty popup. Just after the method adding the scale bar and just before the function called after the map loads, we will define a popup and define the initial hover state id.
 
@@ -421,7 +424,7 @@ The result should look like the image below.
 ![Popup and Shading on Hover](images/popup.png)
 **Figure 05**. Popup and Shading on Hover.
 
-## Filter Geojson Data with the Time Slider
+### Filter Geojson Data with the Time Slider
 
 One of the issues with the current visualization is that all of the wildfires appear at once and overlap. The presentation is confusing and many fires are hidden behind later fires. Using the existing time slider, we are going to filter the polygons so that only the fires for the selected year appear on the screen.
 
@@ -738,8 +741,8 @@ You should now have [a web map application that generates vector tiles from heav
 
 </body>
 ```
-
-## Generate Vector Tiles from GeoJSON Files
+## Method 2: Pre-Generated and Styled Vector Tiles
+### Generate Vector Tiles from GeoJSON Files
 
 To do this, you will need [tippecanoe](https://github.com/mapbox/tippecanoe), [mbutil](https://github.com/mapbox/mbutil), and MacOS or Linux.
 
@@ -763,7 +766,7 @@ gzip -d -r -S .pbf *
 find . -type f -exec mv '{}' '{}'.pbf \;
 ```
 
-## Create a Style for the Vector Tiles
+### Create a Style for the Vector Tiles
 
 At this point, we need to define the style settings for our vector tiles. Part of the work is already done. In your code where you defined ```const style``` with a link to maptiler.com, copy that link along with your api code and paste it into your browser's address bar. You should see an option to view the raw json data at this address. Choose this option, copy the contents, and paste this into the style definition where the link was. You should "beautify" this code block for easier editing. You can minify it later when you are done.
 
@@ -808,7 +811,7 @@ After adding these tiles as a source, we need to add and style a layer. Find the
 }
 ```
 
-## Edit MapLibre GL JavaScript
+### Edit MapLibre GL JavaScript
 
 Finally, we need to edit the javascript in our index.html document. First, scroll down to the code block encapsulated by ```map.on('load', () => {});``` and delete the entire block, since we no longer need to load the geojson data with the map.
 
